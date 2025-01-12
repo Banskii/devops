@@ -46,6 +46,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH }}
         script: |
+          cd /user-mgmt-service
           git pull origin main  # Pull the latest changes
           docker-compose down   # Stop any existing containers
           docker-compose pull   # Pull the updated Docker images
