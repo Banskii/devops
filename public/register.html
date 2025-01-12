@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    <h1>User Registration</h1>
+    <form id="registerForm">
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        
+        <label for="firstName">First Name:</label><br>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+        
+        <label for="lastName">Last Name:</label><br>
+        <input type="text" id="lastName" name="lastName" required><br><br>
+        
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <button type="submit">Register</button>
+    </form>
+
+    <p id="registerError" style="color: red; display: none;"></p>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        firstName,
+                        lastName,
+                        password
+                    })
+                });
+
+                const result = await response.json();
+                if (response.status === 201) {
+                    alert('User registered successfully');
+                    window.location.href = 'login.html'; // Redirect to login page
+                } else {
+                    document.getElementById('registerError').textContent = result.message;
+                    document.getElementById('registerError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('registerError').textContent = 'Error: ' + error.message;
+                document.getElementById('registerError').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

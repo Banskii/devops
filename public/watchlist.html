@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlist</title>
+</head>
+<body>
+    <div id="watchlist" class="video-list">
+        <!-- Watchlist items will be injected here -->
+    </div>
+    <button id="goToVideosButton">Go to Videos</button>
+    <script>
+        // Function to fetch watchlist and render the videos
+        async function fetchWatchlist() {
+            try {
+                const response = await fetch('/watchlist/api');
+                const watchlist = await response.json();
+
+                const watchlistContainer = document.getElementById('watchlist');
+                watchlistContainer.innerHTML = ''; // Clear any previous watchlist items
+
+                // Loop through the videos in the watchlist and render them
+                watchlist.forEach(video => {
+                    const videoItem = document.createElement('div');
+                    videoItem.classList.add('video-item');
+
+                    videoItem.innerHTML = `
+                        <h3>${video.video_name}</h3>
+                        <p><strong>Genre:</strong> ${video.genre}</p>
+                        <p><strong>Description:</strong> ${video.description}</p>
+                        <button onclick="streamVideo('${video._id}')">Click to Stream</button>
+                    `;
+
+                    watchlistContainer.appendChild(videoItem);
+                });
+            } catch (error) {
+                console.error('Error fetching watchlist:', error);
+                alert('Failed to load watchlist.');
+            }
+        }
+
+        // Function to redirect to the streaming page
+        function streamVideo(videoId) {
+            window.location.href = `/videos/${video._id}`;
+        }
+
+        document.getElementById('goToVideosButton').addEventListener('click', () => {
+            window.location.href = '/videos';  // Redirect back to the videos page
+        });
+
+        // Call function to fetch and display watchlist when page loads
+        window.onload = fetchWatchlist;
+    </script>
+</body>
+</html>

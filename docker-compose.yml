@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb+srv://tekenaotus:UPZDYYt0waZDQSv5@cluster0.8o0rm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+    volumes:
+      - .:/usr/src/app  # Mount the current directory to /usr/src/app inside the container
+

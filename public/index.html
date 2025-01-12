@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 300px;
+            margin: 0 auto;
+            padding-top: 50px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="text" id="firstname" placeholder="First Name" required />
+            <input type="text" id="lastname" placeholder="Last Name" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <button type="submit">Register</button>
+        </form>
+	<p>Already have an account? <a href="/login">Login here</a><p>
+    </div>
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async function(e) {
+            e.preventDefault();  // Prevent page reload on form submit
+
+            const email = document.getElementById("email").value;
+            const firstname = document.getElementById("firstname").value;
+            const lastname = document.getElementById("lastname").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                // Send POST request to the server
+                const response = await fetch('http://54.175.240.248:3002/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, firstname, lastname, password })
+                });
+
+                // Check if the response is successful (status code 2xx)
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Display success message if registration is successful
+                    alert(data.message || "User registered successfully.");
+                } else {
+                    // Display the message returned from the server in case of failure
+                    alert(data.message || "An error occurred. Please try again.");
+                }
+            } catch (error) {
+                // Handle any unexpected errors (e.g., network issues)
+                console.error('Error during registration:', error);
+                alert('An unexpected error occurred. Please try again later.');
+            }
+        });
+    </script>
+</body>
+</html>

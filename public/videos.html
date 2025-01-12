@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video List</title>
+    <style>
+        .video-list {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .video-item {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .video-item h3 {
+            margin: 0;
+        }
+        .video-item p {
+            margin: 5px 0;
+        }
+        .video-item button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .video-item button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoList" class="video-list">
+        <!-- Video items will be injected here -->
+    </div>
+    <button id = "goToWatchlistButton">Go to Watchlist</button>
+    <script>
+        // Function to fetch video details and render them
+        async function fetchVideos() {
+            try {
+                const response = await fetch('/videos/api');
+                const videos = await response.json();
+
+                const videoListContainer = document.getElementById('videoList');
+
+                videos.forEach(video => {
+                    const videoItem = document.createElement('div');
+                    videoItem.classList.add('video-item');
+
+                    videoItem.innerHTML = `
+                        <h3>${video.video_name}</h3>
+                        <p><strong>Genre:</strong> ${video.genre}</p>
+                        <p><strong>Description:</strong> ${video.description}</p>
+                        <button onclick="streamVideo('${video.id}')">Click to Stream</button>
+                        <button onclick="addToWatchlist('${video.id}', '${video.video_name}', '${video.video_url}', '${video.description}', '${video.genre}')">Add to watchlist</button>
+                    `;
+
+                    videoListContainer.appendChild(videoItem);
+                });
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+                alert('Failed to load videos.');
+            }
+        }
+
+        // Function to redirect to the streaming page
+        function streamVideo(videoId) {
+            window.location.href = `/videos/${videoId}`;
+        }
+    
+        document.getElementById('goToWatchlistButton').addEventListener('click', () => {
+            window.location.href = '/watchlist';  // Redirect to the user's watchlist page
+        });
+        
+        async function addToWatchlist(videoId, videoName, videoUrl, description, genre) {
+          try {
+            const response = await fetch('http://54.175.240.248:3002/watchlist/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({videoId, videoName, videoUrl, description, genre })
+            });
+
+            if (response.ok) {
+                alert("Video added to your watchlist!");
+            } else {
+                alert("Failed to add to watchlist.");
+            }
+        } catch (error) {
+                console.error('Error adding video to watchlist:', error);
+                alert('An error occurred while adding the video to the watchlist.');
+            }
+        }
+
+        // Call function to fetch and display videos when page loads
+        window.onload = fetchVideos;
+    </script>
+</body>
+</html>

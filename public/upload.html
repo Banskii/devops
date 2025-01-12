@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload File</title>
+</head>
+<body>
+  <h1>Upload a File</h1>
+  <form id="uploadForm" method="POST" enctype="multipart/form-data" action="/upload">
+    <label for="videoTitle">Title:</label>
+    <input type="text" id="videoTitle" name="title" required><br><br>
+
+    <label for="videoDescription">Description:</label>
+    <textarea id="videoDescription" name="description" required></textarea><br><br>
+
+    <label for="videoGenre">Genre:</label>
+    <input type="text" id="videoGenre" name="genre" required><br><br>
+
+    <label for="videoFile">Upload Video:</label>
+    <input type="file" id="videoFile" name="videoFile" accept="video/*" required><br><br>
+
+    <button type="submit">Upload</button>
+  </form>
+
+
+  <div id="response"></div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      try {
+        // Send request without any authorization headers
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        const message = result.message;
+        const fileUrl = result.fileUrl;
+
+        // Display response from server
+        document.getElementById('response').innerHTML = `
+          <p>${message}</p>
+          ${fileUrl ? `<a href="${fileUrl}" target="_blank">View File</a>` : ''}
+        `;
+      } catch (error) {
+        console.error('Error during file upload:', error);
+        document.getElementById('response').innerHTML = '<p>There was an error uploading the file. Please try again.</p>';
+      }
+    });
+  </script>
+</body>
+</html>
