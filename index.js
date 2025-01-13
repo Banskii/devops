@@ -1,4 +1,5 @@
 
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -20,6 +21,8 @@ const mysql = require('mysql2')
 require('dotenv').config();
 
 const app = express();
+const port = 3002;
+
 
 // Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -62,7 +65,7 @@ mongoose.connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mysql.createConnection({
   host: 'database.cef1ze2v7zq7.us-east-1.rds.amazonaws.com',
   user: 'admin',
-  password: 'Database11.',
+  password: 'Tekesotus11.',
   database: 'watchlist',
   port: 3306,
   charset: 'utf8mb4'
@@ -350,8 +353,9 @@ app.get('/register', (req, res) => {
 });
 
 // Start the Express server
-const port = 3002;
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
 });
-
+}
+module.exports = app;
