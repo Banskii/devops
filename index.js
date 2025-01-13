@@ -358,6 +358,40 @@ app.get('/upload', (req, res) => {
 
 
 
+// Assuming you're using Express.js and MongoDB
+app.delete('/watchlist', (req, res) => {
+  const { videoUrl } = req.body;
+
+  if (!videoUrl) {
+    return res.status(400).json({ message: 'Video URL is required' });
+  }
+
+  // Read the current watchlist data
+  fs.readFile(watchlistFilePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error reading watchlist' });
+    }
+
+    let watchlist = JSON.parse(data);
+
+    // Remove the video with the matching URL
+    watchlist = watchlist.filter(video => video.url !== videoUrl);
+
+    // Write the updated watchlist back to the file
+    fs.writeFile(watchlistFilePath, JSON.stringify(watchlist, null, 2), 'utf8', (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Error saving updated watchlist' });
+      }
+
+      res.status(200).json({ message: 'Video removed from watchlist' });
+    });
+  });
+});
+
+
+
+
+
 app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
