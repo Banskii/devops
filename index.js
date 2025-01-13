@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -167,12 +165,24 @@ app.post('/upload', upload.single('videoFile'), async (req, res) => {
 
   // Use FFmpeg to extract video metadata
   ffmpeg(tempFilePath)
+  .on('start', commandLine => {
+    console.log('FFmpeg command:', commandLine); // Logs the command being executed
+  })
+  .on('stderr', stderr => {
+    console.error('FFmpeg stderr:', stderr); // Logs any errors from FFmpeg
+  })
+  .on('error', (err, stdout, stderr) => {
+    console.error('Error extracting metadata:', err);
+    console.error('FFmpeg stderr:', stderr); // Detailed FFmpeg error message
+    return res.status(500).json({ message: 'Error extracting metadatas' });
+  })
+
     .ffprobe((err, metadata) => {
       // Remove the temporary file after processing
       fs.unlinkSync(tempFilePath);
       if (err) {
-        console.error('Error extracting metadata:', err);
-        return res.status(500).json({ message: 'Error extracting metadata' });
+        console.error('Error extracting ffprobe:', err);
+        return res.status(500).json({ message: 'Error extracting metadataa' });
       }
 
     // Extract required metadata
